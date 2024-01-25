@@ -1,5 +1,5 @@
 export const initialState = {
-  question: [
+  questions: [
     {
       questionText: "Question",
       questionType: "radio",

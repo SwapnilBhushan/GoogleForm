@@ -2,24 +2,38 @@ import { Typography } from "@mui/material";
 import axios from "axios";
 import React, { useState, useEffect } from "react";
 import { useParams, useRoutes } from "react-router-dom";
-
-const NewForm = () => {
+import "./NewForm.css";
+const NewForm = ({ formData }) => {
   // const quest = [];
   // const post_answer = [];
   // const [answer, setAnswer] = useState([]);
-  const data = useParams();
+  // const uuid = useRoutes();
+  const id = useParams();
   // const form = routes.data;
-  //const [data, setData] = useState({});
+  const [formId, setFormId] = useState("");
+
+  const [data, setData] = useState(formData);
   // const [{ questions, doc_name, doc_desc }, dispatch] = useStateValue();
   // const routes = useParams();
   // const data = routs.data;
-  const getData = () => {
+  const getData = async (id) => {
     try {
-      const response = axios.get(`http://localhost:2020/getForm/`);
+      const response = await axios.get(
+        `http://localhost:2020/api/getForm/${id}`
+      );
+      if (response.status == 200) {
+        setData(response.data);
+      }
     } catch (error) {}
   };
 
-  console.log("from another component", data);
+  useEffect(() => {
+    setFormId(id);
+    getData();
+  }, [id]);
+
+  console.log("from another component", id);
+  console.log("Form comp: ", data);
   return (
     <div className="submit">
       <div className="user_form">

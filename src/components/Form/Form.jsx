@@ -19,7 +19,6 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { FcRightUp } from "react-icons/fc";
 import FilterNoneIcon from "@mui/icons-material/FilterNone";
 import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
-
 import "./Form.css";
 import {
   Accordion,
@@ -34,15 +33,18 @@ import {
   Switch,
   Typography,
 } from "@mui/material";
-import { AddCardOutlined } from "@mui/icons-material";
+import { AddCardOutlined, AssistWalker } from "@mui/icons-material";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
-
+import { v4 as uuidv4 } from "uuid";
 import { useNavigate } from "react-router-dom";
 
 import axios from "axios";
+import { useStateValue } from "../Store/Provider";
+import NewForm from "./NewForm";
 
 const Form = () => {
   const navigate = useNavigate();
+  const uuid = uuidv4();
   const [formData, setFormdata] = useState({});
   const [question, setQuestion] = useState([
     {
@@ -60,6 +62,65 @@ const Form = () => {
   ]);
   const [documentName, setDocumentName] = useState("Untitled Document");
   const [docDesc, setDocDesc] = useState("Add Description");
+  // const [answer, setAnswer] = useState([]);
+  // const quest = [];
+  // const post_answer = [];
+  // const [{ questions, doc_name, doc_desc }, dispatch] = useStateValue();
+
+  // const selectAnswer = (que, option) => {
+  //   let k = answer.findIndex((ele) => ele.question == que);
+
+  //   answer[k].answer = option;
+  //   setAnswer(answer);
+  // };
+
+  // useEffect(() => {
+  //   questions.map((q) => {
+  //     answer.push({
+  //       question: q.questionText,
+  //       answer: "",
+  //     });
+
+  //     questions.map((q, index) => {
+  //       quest.push({ header: q.questionText, key: q.questionText });
+  //     });
+  //   });
+  // }, []);
+
+  // const post_answer_data = [];
+
+  // function selectInput(que, option) {
+  //   let k = answer.findIndex((ele) => ele.question == que);
+
+  //   answer[k].answer = option;
+  //   setAnswer(answer);
+  //   console.log(answer);
+  // }
+
+  // function selectCheck(e, que, option) {
+  //   let d = [];
+  //   var k = answer.findIndex((ele) => ele.question == que);
+  //   if (answer[k].answer) {
+  //     d = answer[k].answer.split(",");
+  //   }
+  //   if (e == true) {
+  //     d.push(option);
+  //   } else {
+  //     let n = d.findIndex((el) => el.option == option);
+  //     d.splice(n, 1);
+  //   }
+  // }
+
+  // const submit = () => {
+  //   answer.map((ele) => {
+  //     post_answer_data[ele.question] = ele.answer;
+  //   });
+
+  //   axios.post("http://localhost:2020/api/answers", {
+  //     column: quest,
+  //     answer_data: [post_answer_data],
+  //   });
+  // };
 
   const handleQuestionTextChange = (index, text) => {
     var newQuestions = [...question];
@@ -68,11 +129,11 @@ const Form = () => {
     console.log(newQuestions);
   };
 
-  const handleQuestionTypeChange = (index, newType) => {
-    const updatedQuestions = [...question];
-    updatedQuestions[index].questionType = newType;
-    setQuestion(updatedQuestions);
-  };
+  // const handleQuestionTypeChange = (index, newType) => {
+  //   const updatedQuestions = [...question];
+  //   updatedQuestions[index].questionType = newType;
+  //   setQuestion(updatedQuestions);
+  // };
   const addQuestionType = (index, type) => {
     let updatedQuestions = [...question];
     console.log(type);
@@ -166,11 +227,11 @@ const Form = () => {
   };
 
   const saveFormData = async () => {
-    // console.log({
-    //   document_name: documentName,
-    //   doc_desc: docDesc,
-    //   questions: question,
-    // });
+    console.log({
+      document_name: documentName,
+      doc_desc: docDesc,
+      questions: question,
+    });
     try {
       const response = await axios.post(
         `http://localhost:2020/api/add_question/`,
@@ -178,6 +239,7 @@ const Form = () => {
           document_name: documentName,
           doc_desc: docDesc,
           questions: question,
+          id: uuid,
         }
       );
       if (response.status === 200) {
@@ -186,10 +248,10 @@ const Form = () => {
         //   question: response.data, // Update with the data you want to store
         // });
         setFormdata(response.data);
-        console.log(response.data);
-        const id = response.data._id;
-
-        //navigate("newForm", { data: formData });
+        // console.log(response.data);
+        // const id = response.data._id;
+        // // Navigate to the newForm component with the id as a parameter
+        // navigate(`/newForm/${id}`);
       }
     } catch (error) {}
   };
@@ -273,10 +335,10 @@ const Form = () => {
                 <Select
                   className="select"
                   style={{ color: "#5f6368", fontSize: "13px" }}
-                  //value={ques.questionType}
-                  onChange={(e) =>
-                    handleQuestionTypeChange(index, e.target.value)
-                  }
+                  value={ques.questionType}
+                  // onChange={(e) =>
+                  //   handleQuestionTypeChange(index, e.target.value)
+                  // }
                 >
                   <MenuItem
                     id="text"
@@ -600,23 +662,24 @@ const Form = () => {
                         ))}
                     </div>
                   ))}
-
-                {/* <div className="user_form_submit">
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    //onClick={submit}
-                    style={{ fontSize: "14px" }}
-                  >
-                    Submit
-                  </Button>
-                </div> */}
               </div>
               <div className="user_footer">Google Forms</div>
             </div>
           </div>
         )}
+
+        {/* <div className="user_form_submit">
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={submit}
+            style={{ fontSize: "14px" }}
+          >
+            Submit
+          </Button>
+        </div> */}
       </div>
+      <div></div>
     </div>
   );
 };
