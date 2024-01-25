@@ -6,7 +6,7 @@ const createForm = async (req, res) => {
 
     const savedForm = await newForm.save();
 
-    console.log("Form saved:", savedForm);
+    //console.log("Form saved:", savedForm);
     res.status(200).json(savedForm); // Send the saved form back as a response
   } catch (error) {
     console.error("Error saving form:", error);
@@ -15,11 +15,23 @@ const createForm = async (req, res) => {
 };
 
 const getForm = async (req, res) => {
+  const { _id } = req.params; // Access _id correctly
+  console.log(_id);
   try {
-    let form = await Form.find();
+    let form = await Form.findById(req.params.id);
+    if (!form) {
+      return res.status(404).json({ message: "Form not found" });
+    }
     res.status(200).json(form);
+    console.log(form);
   } catch (error) {
-    console.log(error);
+    console.error("Error retrieving form:", error);
+    res.status(500).json({ message: "Server error" });
   }
 };
-module.exports = { createForm, getForm };
+
+const getAnswer = async (req, res) => {
+  const answer = req.body;
+  console.log("answers: ", answer);
+};
+module.exports = { createForm, getForm, getAnswer };
